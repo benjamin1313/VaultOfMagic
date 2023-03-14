@@ -6,11 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import com.example.vaultofmagic.data.ItemRepository
+import com.example.vaultofmagic.models.DndItem
 import com.example.vaultofmagic.ui.theme.VaultOfMagicTheme
 import kotlinx.coroutines.launch
 
@@ -83,6 +86,7 @@ fun MenuDrawer(){
 
 @Composable
 fun PageContent(pagePadding:PaddingValues){
+    val repo:ItemRepository = ItemRepository()
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(pagePadding)){
@@ -99,6 +103,20 @@ fun PageContent(pagePadding:PaddingValues){
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = "Here in the vault you will find a collection of various magical items and artifacts. \nOpen the menu to browse the vaults collection or add your own items to the vault.")
+                }
+            }
+            Box(modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth()){
+                var dndItems by remember { mutableStateOf<List<DndItem>?>(listOf()) }
+                LaunchedEffect(dndItems){
+                    dndItems = repo.getAllItems()
+                }
+                LazyColumn(){
+                    item{Text(text = "test1")}
+                    item{Text(text = "test2")}
+                    item{Text(text = "test3")}
+                    dndItems?.forEach {  item{Text(text = it.name)} }
                 }
             }
         }
