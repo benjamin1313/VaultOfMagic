@@ -8,7 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAbsoluteAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,9 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import coil.compose.AsyncImage
 import com.example.vaultofmagic.data.ItemRepository
 import com.example.vaultofmagic.models.DndItem
 import com.example.vaultofmagic.ui.theme.VaultOfMagicTheme
+import kotlinx.coroutines.launch
 
 class ItemListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +40,11 @@ class ItemListActivity : ComponentActivity() {
                 Scaffold(
                     topBar = { TopAppBar(title = {Text("Vault Of Magic")},
                         backgroundColor = materialBlue700,
+                        navigationIcon = {
+                            IconButton(onClick = {finish() },
+                            ) {Icon(Icons.Default.ArrowBack, contentDescription = "Go back")}
+
+                        }
                     )
                     },
                     drawerContent = { },
@@ -72,13 +83,30 @@ fun ItemCard(item: DndItem){
             val intent = Intent(context, ItemDetailsActivity::class.java)
             intent.putExtra("ITEMID", item.id)
             startActivity(context, intent, null)
-                   },
-    backgroundColor = Color.LightGray) {
-        Column() {
-            Text(text = item.name, fontSize = 35.sp, modifier = Modifier.padding(horizontal = 10.dp))
-            Row() {
-                Text(text = item.type, fontStyle = FontStyle.Italic, modifier = Modifier.padding(horizontal = 10.dp))
-                Text(text = item.rarity, fontWeight = FontWeight.Bold)
+        },
+    backgroundColor = Color.LightGray,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(
+                model = item.imgUrl,
+                contentDescription = null,
+                modifier = Modifier.size(100.dp).padding(10.dp),
+            )
+
+            Column() {
+                Text(
+                    text = item.name,
+                    fontSize = 35.sp,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
+                Row() {
+                    Text(
+                        text = item.type,
+                        fontStyle = FontStyle.Italic,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+                    Text(text = item.rarity, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
